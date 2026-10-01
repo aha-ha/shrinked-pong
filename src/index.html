@@ -1,3 +1,29 @@
-<body>
-    <h1>Hello World</h1>
+<body style="#c {image-rendering: pixelated;};">
+    <title>Pong</title>
+    <div id="d">
+        <canvas id="c"></canvas>
+    </div>
+    <script>
+        const c = document.getElementById("c");
+        const ctx = c.getContext("2d");
+        c.width = window.innerWidth/1.1;
+        c.height = window.innerHeight/1.1;
+
+        //background
+        ctx.fillRect(0, 0, c.width, c.height)
+        
+        const paddle_width = 20;
+        const paddle_height = 100;
+        const paddle_distance = 30
+
+        const paddle_left = {
+            x: paddle_distance,
+            y: c
+        };
+
+        //draw paddle 1
+        //ctx.fillRect()
+
+
+    </script>
 </body>
