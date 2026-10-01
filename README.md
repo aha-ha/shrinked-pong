@@ -1,7 +1,7 @@
 # shrinked-pong
 A pretty basic version of pong for 2 players.
 ## How to Play
-2 Players play one one keyboard - player one uses w and s to control their paddle, player 2 uses the up and down arrow keys.
+2 Players play one one keyboard - player one uses w and s to control their paddle, player 2 uses the up and down arrow keys. Every time the ball hits a paddle, it gets faster.
 ## How?
 The game works by drawing on the screen using the canvas API, 60 times per second. All the positions are stored in variables.
 ## Why?
