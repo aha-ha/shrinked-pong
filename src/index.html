@@ -1,55 +1,76 @@
-<body>
-    <title>Pong</title>
-    <canvas id="c"></canvas>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        #c {
-            width: 100vw;
-            height: 100vh;
-        }
-    </style>
-    <script>
-        const c = document.getElementById("c");
-        const ctx = c.getContext("2d");
-        c.width = window.innerWidth;
-        c.height = window.innerHeight;
-
-        //background
-        ctx.fillRect(0, 0, c.width, c.height)
-        
-        const paddle_width = 20;
-        const paddle_height = 100;
-        const paddle_distance = 30;
-
-        const ball_size = 20;
-
-        const paddle_left = {
-            x: paddle_distance,
-            y: c.height / 2 - paddle_height / 2
-        };
-
-        const paddle_right = {
-            x: c.width - paddle_distance - paddle_width,
-            y: c.height / 2 - paddle_height / 2
-        };
-
-        const ball = {
-            x: c.width / 2 - ball_size,
-            y: c.height / 2 - ball_size
-        }
-
-        //draw paddle 1
-        ctx.clearRect(paddle_left.x, paddle_left.y, paddle_width, paddle_height)
-
-        //draw paddle 2
-        ctx.clearRect(paddle_right.x, paddle_right.y, paddle_width, paddle_height)
-
-        //draw ball
-        ctx.clearRect(ball.x, ball.y, ball_size, ball_size)
+    <body>
+        <title>Pong</title>
+        <canvas id="c"></canvas>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #c {
+                width: 100vw;
+                height: 100vh;
+            }
+        </style>
+        <script>
+            const c = document.getElementById("c");
+            const ctx = c.getContext("2d");
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
 
 
-    </script>
-</body>
+            
+            const paddle_width = 20;
+            const paddle_height = 100;
+            const paddle_distance = 30;
+
+            const ball_size = 20;
+
+            const paddle_left = {
+                x: paddle_distance,
+                y: c.height / 2 - paddle_height / 2
+            };
+
+            const paddle_right = {
+                x: c.width - paddle_distance - paddle_width,
+                y: c.height / 2 - paddle_height / 2
+            };
+
+            const ball = {
+                x: c.width / 2 - ball_size / 2,
+                y: c.height / 2 - ball_size / 2
+            }
+
+            function update_pos() {
+                paddle_left.y = c.height / 2 - paddle_height / 2;
+                paddle_right.x = c.width - paddle_distance - paddle_width;
+                paddle_right.y = c.height / 2 - paddle_height / 2;
+                ball.x = c.width / 2 - ball_size / 2;
+                ball.y = c.height / 2 - ball_size / 2;
+            }
+
+            function draw() {
+                //background
+                ctx.fillRect(0, 0, c.width, c.height)
+                //draw paddle 1
+                ctx.clearRect(paddle_left.x, paddle_left.y, paddle_width, paddle_height)
+
+                //draw paddle 2
+                ctx.clearRect(paddle_right.x, paddle_right.y, paddle_width, paddle_height)
+
+                //draw ball
+                ctx.clearRect(ball.x, ball.y, ball_size, ball_size)
+            }
+
+            window.addEventListener("resize", () => {
+                c.width = window.innerWidth;    
+                c.height = window.innerHeight;
+                update_pos();
+                draw();
+            });
+
+            draw();
+
+
+
+        </script>
+    </body>
