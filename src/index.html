@@ -1,10 +1,11 @@
     <body>
         <title>Pong</title>
-        <canvas id="c"></canvas>
+        <canvas id="c" tabindex="0"></canvas>
         <style>
             body {
                 margin: 0;
                 padding: 0;
+                overflow: hidden;
             }
             #c {
                 width: 100vw;
@@ -17,58 +18,166 @@
             c.width = window.innerWidth;
             c.height = window.innerHeight;
 
+            let score_left = 0;
+            let score_right = 0;
 
+            const target_fps = 60;
+            const fps_interval = 1000 / target_fps;
+            let last_time = performance.now();
+            let fps =  0;
             
             const paddle_width = 20;
             const paddle_height = 100;
             const paddle_distance = 30;
+            const paddle_speed = 16;
 
             const ball_size = 20;
+            const speed_multiplier = 1.2;
 
             const paddle_left = {
                 x: paddle_distance,
-                y: c.height / 2 - paddle_height / 2
+                y: c.height / 2 - paddle_height / 2,
+                offset: 0
             };
 
             const paddle_right = {
                 x: c.width - paddle_distance - paddle_width,
-                y: c.height / 2 - paddle_height / 2
+                y: c.height / 2 - paddle_height / 2,
+                offset: 0
             };
 
             const ball = {
                 x: c.width / 2 - ball_size / 2,
-                y: c.height / 2 - ball_size / 2
+                y: c.height / 2 - ball_size / 2,
+                offset_x: 0,
+                offset_y: 0,
+                speed_x: 6,
+                speed_y: 4
             }
-
             function update_pos() {
-                paddle_left.y = c.height / 2 - paddle_height / 2;
+                if (pressed_keys["w"]) {
+                    if (paddle_left.y >= 0) {
+                        paddle_left.offset += paddle_speed * -1;
+                    }
+                } else if (pressed_keys["s"]) {
+                    if (paddle_left.y + paddle_height <= c.height) {
+                        paddle_left.offset += paddle_speed;
+                    }
+                }
+                if (pressed_keys["arrowup"]) {
+                    if (paddle_right.y >= 0) {
+                        paddle_right.offset += paddle_speed * -1;
+                    }
+                } else if (pressed_keys["arrowdown"]) {
+                    if (paddle_right.y + paddle_height <= c.height) {
+                        paddle_right.offset += paddle_speed;
+                    }
+                }
+
+                //top/bottom collision
+                if (ball.y <= 0 || ball.y + ball_size >= c.height) {
+                    ball.speed_y *= -1;
+                }
+
+                //left paddle collision
+                if (
+                    ball.x <= paddle_left.x + paddle_width &&
+                    ball.x >= paddle_left.x &&
+                    ball.y + ball_size >= paddle_left.y &&
+                    ball.y <= paddle_left.y + paddle_height
+                ) {
+                    ball.speed_x = Math.abs(ball.speed_x) * speed_multiplier;
+                    ball.speed_y *= speed_multiplier;
+                }
+
+                //right paddle collision
+                if (
+                    ball.x + ball_size >= paddle_right.x &&
+                    ball.x <= paddle_right.x + paddle_width &&
+                    ball.y + ball_size >= paddle_right.y &&
+                    ball.y <= paddle_right.y + paddle_height
+                ) {
+                    ball.speed_x = -Math.abs(ball.speed_x) * speed_multiplier;
+                    ball.speed_y *= speed_multiplier;
+                }
+
+                //
+                if (ball.x + ball_size < 0) {
+                    score_right++;
+                    ball.offset_x = 0;
+                    ball.offset_y = 0;
+                    ball.speed_x = 6;
+                    ball.speed_y = 4;
+                } else if (ball.x > c.width) {
+                    score_left++;
+                    ball.offset_x = 0;
+                    ball.offset_y = 0;
+                    ball.speed_x = -6;
+                    ball.speed_y = -4;
+                }
+                
+                ball.offset_x += ball.speed_x;
+                ball.offset_y += ball.speed_y;
+
+                paddle_left.y = c.height / 2 - paddle_height / 2 + paddle_left.offset;
                 paddle_right.x = c.width - paddle_distance - paddle_width;
-                paddle_right.y = c.height / 2 - paddle_height / 2;
-                ball.x = c.width / 2 - ball_size / 2;
-                ball.y = c.height / 2 - ball_size / 2;
+                paddle_right.y = c.height / 2 - paddle_height / 2 + paddle_right.offset;
+                ball.x = c.width / 2 - ball_size / 2 + ball.offset_x;
+                ball.y = c.height / 2 - ball_size / 2 + ball.offset_y;
             }
 
             function draw() {
+                update_pos();
                 //background
-                ctx.fillRect(0, 0, c.width, c.height)
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, c.width, c.height);
+                //set color to white
+                ctx.fillStyle = "white";
                 //draw paddle 1
-                ctx.clearRect(paddle_left.x, paddle_left.y, paddle_width, paddle_height)
+                ctx.fillRect(paddle_left.x, paddle_left.y, paddle_width, paddle_height);
 
                 //draw paddle 2
-                ctx.clearRect(paddle_right.x, paddle_right.y, paddle_width, paddle_height)
+                ctx.fillRect(paddle_right.x, paddle_right.y, paddle_width, paddle_height);
 
                 //draw ball
-                ctx.clearRect(ball.x, ball.y, ball_size, ball_size)
+                ctx.fillRect(ball.x, ball.y, ball_size, ball_size);
+
+                //draw score
+                ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.font = "700 120px system-ui, -apple-system, sans-serif";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(score_left, c.width / 4, c.height / 3);
+                ctx.fillText(score_right, c.width / 4 * 3, c.height / 3);
             }
 
             window.addEventListener("resize", () => {
                 c.width = window.innerWidth;    
                 c.height = window.innerHeight;
-                update_pos();
+                paddle_left.offset = 0;
+                paddle_right.offset = 0;
                 draw();
             });
 
-            draw();
+            const pressed_keys = {};
+            window.addEventListener("keydown", (e) => {
+                //console.log(e);
+                pressed_keys[e.key.toLowerCase()] = true;
+            })
+            window.addEventListener("keyup", (e) => {
+                pressed_keys[e.key.toLowerCase()] = false;
+            })
+
+
+            function game_loop(current_time) {
+                requestAnimationFrame(game_loop);
+                const elapsed = current_time - last_time
+                if (elapsed  >= fps_interval) {
+                    last_time = current_time - (elapsed % fps_interval);
+                    draw()
+                }
+            }
+            requestAnimationFrame(game_loop);
 
 
 
