@@ -1,2 +1,11 @@
 # shrinked-pong
-A pretty basic version of pong for 2 players. Left player controls it using w and s, right player with the up and down arrow keys.
+A pretty basic version of pong for 2 players.
+## How to Play
+2 Players play one one keyboard - player one uses w and s to control their paddle, player 2 uses the up and down arrow keys.
+## How?
+The game works by drawing on the screen using the canvas API, 60 times per second. All the positions are stored in variables.
+## Why?
+The idea of this project is to work in a single data URI link. You can just copy the text below in your Browsers URL bar
+```html
+data:text/html,<body><title>Pong</title><canvas id="c" tabindex="0"></canvas><style>body{margin:0;padding:0;overflow:hidden}%23c{width:100vw;height:100vh}</style><script>const e=document.getElementById("c"),t=e.getContext("2d");e.width=window.innerWidth,e.height=window.innerHeight;let i=0,s=0;const f=1e3/60;let o=performance.now();const d=20,n=100,h=20,y=1.2,x={x:30,y:e.height/2-50,offset:0},w={x:e.width-30-d,y:e.height/2-50,offset:0},l={x:e.width/2-10,y:e.height/2-10,offset_x:0,offset_y:0,speed_x:6,speed_y:4};function _(){r.w?x.y>=0&&(x.offset+=-16):r.s&&x.y+n<=e.height&&(x.offset+=16),r.arrowup?w.y>=0&&(w.offset+=-16):r.arrowdown&&w.y+n<=e.height&&(w.offset+=16),(l.y<=0||l.y+h>=e.height)&&(l.speed_y*=-1),l.x<=x.x+d&&l.x>=x.x&&l.y+h>=x.y&&l.y<=x.y+n&&(l.speed_x=Math.abs(l.speed_x)*y,l.speed_y*=y),l.x+h>=w.x&&l.x<=w.x+d&&l.y+h>=w.y&&l.y<=w.y+n&&(l.speed_x=-Math.abs(l.speed_x)*y,l.speed_y*=y),l.x+h<0?(s++,l.offset_x=0,l.offset_y=0,l.speed_x=6,l.speed_y=4):l.x>e.width&&(i++,l.offset_x=0,l.offset_y=0,l.speed_x=-6,l.speed_y=-4),l.offset_x+=l.speed_x,l.offset_y+=l.speed_y,x.y=e.height/2-50+x.offset,w.x=e.width-30-d,w.y=e.height/2-50+w.offset,l.x=e.width/2-10+l.offset_x,l.y=e.height/2-10+l.offset_y,t.fillStyle="black",t.fillRect(0,0,e.width,e.height),t.fillStyle="white",t.fillRect(x.x,x.y,d,n),t.fillRect(w.x,w.y,d,n),t.fillRect(l.x,l.y,h,h),t.fillStyle="rgba(255, 255, 255, 0.2)",t.font="700 120px system-ui, -apple-system, sans-serif",t.textAlign="center",t.textBaseline="middle",t.fillText(i,e.width/4,e.height/3),t.fillText(s,e.width/4*3,e.height/3)}window.addEventListener("resize",()=>{e.width=window.innerWidth,e.height=window.innerHeight,x.offset=0,w.offset=0,_()});const r={};window.addEventListener("keydown",e=>{r[e.key.toLowerCase()]=!0}),window.addEventListener("keyup",e=>{r[e.key.toLowerCase()]=!1}),requestAnimationFrame(function e(t){requestAnimationFrame(e);const i=t-o;i>=f&&(o=t-i%25f,_())});</script></body>
+```
